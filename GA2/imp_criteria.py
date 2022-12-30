@@ -1,50 +1,75 @@
 import numpy as np
-import numpy as np
-from PIL import Image
-import matplotlib.pyplot as plt
-import cv2
-import sys
-from random import randint
-from numpy.random import default_rng
-import random
-# import time
-from tqdm.notebook import tqdm_notebook
-
-rng = default_rng()
-np.random.seed(909)
+import math
 
 from ench import *
 
 
-def count_edges(img_array):
-    edges = cv2.Canny(np.uint8(img_array), threshold1=100, threshold2=200)
-    edge_count = np.count_nonzero(edges)
-    return edge_count
+# -----------------------------------------------------------
+# Функция для расчета суммарной интенсивности краевых
+# пикселей и их количества.
+# Для выделения контуров используются маски оператора Собеля.
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=True, parallel=True)
+def sum_intensity(image):
+    E = 0
+    pix_count = 0
+    sobel_img = image.copy()
+    for i in numba.prange(0, image.shape[0]):
+        for j in range(0, image.shape[1]):
+            if i == 0 or j == 0 or i == image.shape[0] - 1 or j == image.shape[1] - 1:
+                sobel_img[i, j] = 0
+                continue
+            hi = image[i - 1, j + 1] + 2 * image[i, j + 1] + image[i + 1, j + 1] - image[i - 1, j - 1] - 2 * image[
+                i, j - 1] - image[i + 1, j - 1]
+
+            vi = image[i + 1, j + 1] + 2 * image[i + 1, j] + image[i + 1, j - 1] - image[i - 1, j + 1] - 2 * image[
+                i - 1, j] - image[i - 1, j - 1]
+
+            G = round(math.sqrt((hi ** 2) + (vi ** 2)))
+            if (G > 130):
+                pix_count = pix_count + 1
+            E = E + G
+            sobel_img[i, j] = G
+
+    return E, pix_count
 
 
-def fitness_function(population, gray_levels, img_array, freq):
+# -----------------------------------------------------------
+# Вычисление количества краевых пикселей изображения
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=False)
+def calculate_edge_count(image):
+    E, pix_count = sum_intensity(image)
+    return pix_count
+
+
+# -----------------------------------------------------------
+# Вычисление значения фитнес-функции для каждой хромосомы
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=False)
+def calculate_fintess_value(gray_levels, chromosome, image_array):
+    image = create_enhanced_image(gray_levels, chromosome, image_array)
+    E, pix_count = sum_intensity(image)
+    fitness_value = math.log(math.log(E) * pix_count)
+    return fitness_value
+
+
+# -----------------------------------------------------------
+# Вычисляет массив значений фитнес-функции для
+# всей популяции
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=False)
+def fitness_for_all_population(population, gray_levels, img_array):
     fitness = []
     for chromosome in population:
-        fitness.append(fitness_func_for_one(chromosome, gray_levels, img_array, freq))
+        fitness.append(calculate_fintess_value(gray_levels, chromosome, img_array))
     return np.array(fitness)
 
 
-def fitness_func_for_one(chromosome, gray_levels, image_array, freq):
-    enhanced_img_array = create_enhanced_image(gray_levels, chromosome, image_array)
-    edge_count = count_edges(enhanced_img_array)
-
-    intensities = sum([chromosome[i] * freq[i] for i in range(len(chromosome))])
-    return np.log(np.log(intensities)) * edge_count
-
-
-def evaluation(img, best_contrasted_img, equalized):
-    return count_edges(best_contrasted_img), count_edges(equalized), count_edges(img)
-
-
 def image_comparison(image, hist_equalized_img, improved_image):
-    initial_edge_count = count_edges(image)
-    hist_edge_count = count_edges(hist_equalized_img)
-    improved_edge_count = count_edges(improved_image)
+    initial_sum_intensity, initial_edge_count = sum_intensity(image)
+    hist_sum_intensity, hist_edge_count = sum_intensity(hist_equalized_img)
+    improved_sum_intensity, improved_edge_count = sum_intensity(improved_image)
     print("Количество ребер исходного изображения: ", initial_edge_count)
     print("Количество ребер после эквализации гистограммы: ", hist_edge_count)
     print("Количество ребер улучшенного изображения: ", improved_edge_count)

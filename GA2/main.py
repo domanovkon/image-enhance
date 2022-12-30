@@ -48,7 +48,7 @@ def research_enhancement(path):
                                                         generations_count, copy.deepcopy(population), False)
 
         calculated_parameters = {"image": improved_image, "crossover_rate": c_rate, "fitness": max_fitness,
-                                 "edges_count": count_edges(improved_image)}
+                                 "edges_count": calculate_edge_count(improved_image)}
 
         cross_solutions.append(calculated_parameters)
 
@@ -56,9 +56,8 @@ def research_enhancement(path):
 
     image_array = np.asarray(image)
 
-    # Получаем массив интенсивностей пикселей и их частоту
-    gray_levels, frequency = np.unique(image_array, return_counts=True)
-    gray_levels, gray_levels_len = preparation_ga_parameters(gray_levels)
+    # Получаем массив интенсивностей пикселей
+    gray_levels, gray_levels_len = preparation_ga_parameters(image_array)
 
     example_image_from_initial_population = create_enhanced_image(gray_levels, numba.typed.List(population[0]),
                                                                   image_array)
@@ -70,7 +69,7 @@ def research_enhancement(path):
     show_final_images(image, improved_image, example_image_from_initial_population, hist_equalized_img,
                       'result/crossover-research.png')
 
-    print("Лучший коэффициент кроссовера: %.1f" %best_fitness_cross_solution['crossover_rate'])
+    print("Лучший коэффициент кроссовера: %.1f" % best_fitness_cross_solution['crossover_rate'])
     image_comparison(image, hist_equalized_img, improved_image)
 
     mutation_solutions = []
@@ -82,7 +81,8 @@ def research_enhancement(path):
                                                         generations_count, copy.deepcopy(population), False)
 
         calculated_parameters = {"image": improved_image, "mutation_rate": m_rate, "fitness": max_fitness,
-                                 "edges_count": count_edges(improved_image)}
+                                 "edges_count": calculate_edge_count(improved_image)}
+
         mutation_solutions.append(calculated_parameters)
 
     best_fitness_mutation_solution = max(mutation_solutions, key=lambda x: x['fitness'])
@@ -92,7 +92,7 @@ def research_enhancement(path):
     show_final_images(image, improved_image, example_image_from_initial_population, hist_equalized_img,
                       'result/mutation-research.png')
 
-    print("Лучшая вероятность мутации: %.1f" %best_fitness_mutation_solution['mutation_rate'])
+    print("Лучшая вероятность мутации: %.1f" % best_fitness_mutation_solution['mutation_rate'])
 
     image_comparison(image, hist_equalized_img, improved_image)
 

@@ -15,11 +15,12 @@ def get_all_gray_levels_len(image):
 
 
 # -----------------------------------------------------------
-# Сортировка массива интенсивностей и подсчет количества
+# Получение массива интенсивностей и подсчет количества
 # уровней серого
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=True)
-def preparation_ga_parameters(gray_levels):
+def preparation_ga_parameters(image_array):
+    gray_levels = np.unique(image_array)
     gray_levels.sort()
     gray_levels_len = len(gray_levels)
     return gray_levels, gray_levels_len

@@ -156,17 +156,15 @@ def genetic_algorithm(image, population_size, crossover_rate, mutation_rate,
 
     image_array = np.asarray(image)
 
-    # Получаем массив интенсивностей пикселей и их частоту
-    gray_levels, frequency = np.unique(image_array, return_counts=True)
-
-    gray_levels, gray_levels_len = preparation_ga_parameters(gray_levels)
+    # Получаем массив интенсивностей пикселей
+    gray_levels, gray_levels_len = preparation_ga_parameters(image_array)
 
     new_population = population
 
     fitness_values_array = []
 
     for generation in (range(generations_count)):
-        fitness = fitness_function(population, gray_levels, image_array, frequency)
+        fitness = fitness_for_all_population(population, gray_levels, image_array)
 
         fitness_values_array.append(max(fitness))
 
@@ -181,6 +179,6 @@ def genetic_algorithm(image, population_size, crossover_rate, mutation_rate,
 
     print("---------------")
 
-    fitness = fitness_function(population, gray_levels, image_array, frequency)
+    fitness = fitness_for_all_population(population, gray_levels, image_array)
 
     return get_best_image(new_population, fitness, gray_levels, image_array)
