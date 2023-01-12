@@ -44,13 +44,25 @@ def calculate_edge_count(image):
 
 
 # -----------------------------------------------------------
+# Вычисление уровня адаптации зрительной системы
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=True)
+def level_of_adaptation(image):
+    max_intensity = image.max()
+    gl_br_val = np.mean(image)
+    LQ = 1 - ((gl_br_val - max_intensity / 2) / (max_intensity / 2))
+    return LQ
+
+
+# -----------------------------------------------------------
 # Вычисление значения фитнес-функции для каждой хромосомы
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=False)
 def calculate_fintess_value(gray_levels, chromosome, image_array):
     image = create_enhanced_image(gray_levels, chromosome, image_array)
     E, pix_count = sum_intensity(image)
-    fitness_value = math.log(math.log(E) * pix_count)
+    LQ = level_of_adaptation(image)
+    fitness_value = math.log(math.log(E) * pix_count) * LQ
     return fitness_value
 
 

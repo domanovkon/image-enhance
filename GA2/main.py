@@ -143,7 +143,7 @@ def enhancement(path):
 
 
 if __name__ == '__main__':
-    file_name = '../imgs/camera_man_3.png'
+    file_name = '../imgs/Albert-Einstein.jpg'
     if research_mode == True:
         research_enhancement(file_name)
     else:
