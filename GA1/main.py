@@ -1,7 +1,8 @@
 import cv2
 import time
 
-from transformation_kernel import pixel_improvement
+from transformation_kernel import *
+from improvement_criteria import *
 
 
 def load_image(path):
@@ -20,10 +21,18 @@ def load_image(path):
 
     start_time = time.time()
 
-    pixel_improvement(image, image_bordered, n, off)
+    new_image = transformaton_calculation(image, image_bordered, n, off)
+
+    calculate_fintess(new_image)
+
+    print("old")
+    calculate_fintess(image)
 
     end_time = time.time() - start_time
     print("Время выполнения --- %s секунд ---" % end_time)
+
+    cv2.imshow("Improved image", new_image)
+    cv2.waitKey(0)
 
 
 if __name__ == '__main__':
