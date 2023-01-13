@@ -10,7 +10,7 @@ def load_image(path):
     cv2.waitKey(0)
 
     # Размер окрестности
-    n = 3
+    n = 10
     off = n // 2
 
     # Изображение с зеркальным отражением границ относительно каждого края
@@ -27,4 +27,4 @@ def load_image(path):
 
 
 if __name__ == '__main__':
-    load_image('../imgs/camera_man_3.png')
+    load_image('../imgs/camera_man_2.jpeg')
