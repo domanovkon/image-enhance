@@ -48,9 +48,9 @@ def calculate_edge_count(image):
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=True)
 def level_of_adaptation(image):
-    max_intensity = image.max()
+    max_intensity = image.max() / 2
     gl_br_val = np.mean(image)
-    LQ = 1 - ((gl_br_val - max_intensity / 2) / (max_intensity / 2))
+    LQ = 1 - (math.fabs(gl_br_val - max_intensity) / max_intensity)
     return LQ
 
 

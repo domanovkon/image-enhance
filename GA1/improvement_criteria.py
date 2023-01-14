@@ -45,16 +45,28 @@ def measure_of_entropy(image):
 
 
 # -----------------------------------------------------------
+# Вычисление уровня адаптации зрительной системы
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=True)
+def level_of_adaptation(image):
+    max_intensity = image.max() / 2
+    gl_br_val = np.mean(image)
+    LQ = 1 - (math.fabs(gl_br_val - max_intensity) / max_intensity)
+    return LQ
+
+
+# -----------------------------------------------------------
 # Получение критериев оценки качества изображения
 # -----------------------------------------------------------
 def calculate_fintess(image):
     entropy = measure_of_entropy(image)
     E, pix_count = sum_intensity(image)
-    fitness_value = fitness_function(image, E, pix_count, entropy)
-    print(E)
-    print(pix_count)
-    print("Fit value")
-    print(fitness_value)
+    LQ = level_of_adaptation(image)
+    fitness_value = fitness_function(image, E, pix_count, entropy, LQ)
+    print("LQ", LQ)
+    print("sum int", E)
+    print("pix count" ,pix_count)
+    print("Fit value", fitness_value)
     return fitness_value
 
 
@@ -62,7 +74,7 @@ def calculate_fintess(image):
 # Вычисление значения фитнес-функции
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=False)
-def fitness_function(image, E, pix_count, entropy):
+def fitness_function(image, E, pix_count, entropy, LQ):
     image_size = image.shape[0] * image.shape[1]
-    return math.log(math.log(E) + math.e) * (pix_count / image_size) *  (entropy)
+    return math.log(math.log(E) + math.e) * (pix_count / image_size) *  (entropy) * LQ
 

@@ -39,7 +39,7 @@ def pixel_improvement(pixel_intensity, M, m, sigma):
     a = 1
     b = 0.5
     c = 1
-    k = 0.6
+    k = 0.4
     epsilon = sys.float_info.epsilon
     new_pixel_value = ((k * M) / (sigma + b + epsilon)) * (pixel_intensity - c * m) + (m ** a)
     if new_pixel_value < 0:
