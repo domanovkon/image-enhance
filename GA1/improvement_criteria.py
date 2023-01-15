@@ -66,6 +66,7 @@ def calculate_fintess(image):
     print("LQ", LQ)
     print("sum int", E)
     print("pix count" ,pix_count)
+    print("enropy", entropy)
     print("Fit value", fitness_value)
     return fitness_value
 

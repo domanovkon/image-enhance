@@ -3,6 +3,7 @@ import time
 
 from transformation_kernel import *
 from improvement_criteria import *
+from genetic_algorithm import *
 
 
 def load_image(path):
@@ -11,7 +12,7 @@ def load_image(path):
     cv2.waitKey(0)
 
     # Размер окрестности
-    n = 5
+    n = 9
     off = n // 2
 
     # Изображение с зеркальным отражением границ относительно каждого края
@@ -21,18 +22,23 @@ def load_image(path):
 
     start_time = time.time()
 
-    new_image = transformaton_calculation(image, image_bordered, n, off)
+    gen_alg(image, image_bordered)
 
-    calculate_fintess(new_image)
+    # global_brightness_value = global_brightness_value_calc(image)
 
-    print("old")
-    calculate_fintess(image)
+    # new_image = transformaton_calculation(image, image_bordered, n, off, global_brightness_value)
+
+    # print("new")
+    # calculate_fintess(new_image)
+    #
+    # print("old")
+    # calculate_fintess(image)
 
     end_time = time.time() - start_time
     print("Время выполнения --- %s секунд ---" % end_time)
 
-    cv2.imshow("Improved image", new_image)
-    cv2.waitKey(0)
+    # cv2.imshow("Improved image", new_image)
+    # cv2.waitKey(0)
 
 
 if __name__ == '__main__':
