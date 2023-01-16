@@ -12,7 +12,7 @@ def load_image(path):
     cv2.waitKey(0)
 
     # Размер окрестности
-    n = 9
+    n = 7
     off = n // 2
 
     # Изображение с зеркальным отражением границ относительно каждого края
@@ -24,15 +24,18 @@ def load_image(path):
 
     gen_alg(image, image_bordered)
 
+
+
+    # params = []
+    # params.append(5)
     # global_brightness_value = global_brightness_value_calc(image)
-
-    # new_image = transformaton_calculation(image, image_bordered, n, off, global_brightness_value)
-
+    # new_image = transformaton_calculation(image, image_bordered, n, off, global_brightness_value, params)
     # print("new")
     # calculate_fintess(new_image)
-    #
     # print("old")
     # calculate_fintess(image)
+
+
 
     end_time = time.time() - start_time
     print("Время выполнения --- %s секунд ---" % end_time)
@@ -42,4 +45,4 @@ def load_image(path):
 
 
 if __name__ == '__main__':
-    load_image('../imgs/camera_man_2.jpeg')
+    load_image('../imgs/camera_man_3.png')

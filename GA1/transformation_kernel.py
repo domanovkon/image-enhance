@@ -61,11 +61,15 @@ def standard_deviation_n(image, i, j, av_br_val, n, off):
 #   k ∈ [0.5 , 1.5]
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=True)
-def pixel_improvement(pixel_intensity, M, m, sigma):
-    a = 1.1
-    b = 0.4
-    c = 1
-    k = 1.2
+def pixel_improvement(pixel_intensity, M, m, sigma, params):
+    a = params[0]
+    b = params[1]
+    c = params[2]
+    k = params[3]
+    # a = 1.48
+    # b = 0.1
+    # c = 0.85
+    # k = 1.42
     new_pixel_value = int((k * (M / (sigma + b + epsilon))) * (pixel_intensity - c * m) + (m ** a))
     if new_pixel_value < 0:
         new_pixel_value = 0
@@ -77,14 +81,30 @@ def pixel_improvement(pixel_intensity, M, m, sigma):
 # -----------------------------------------------------------
 # Функция преобразования изображения
 # -----------------------------------------------------------
-# @njit(fastmath=True, cache=True, parallel=True)
-def transformaton_calculation(image, image_bordered, n, off, global_brightness_value):
-    new_image = image.copy()
+@njit(fastmath=True, cache=True, parallel=True)
+def transformaton_calculation(image, image_bordered, n, off, global_brightness_value, params):
+    improved_image = image.copy()
 
     for i in numba.prange(0, image.shape[0]):
         for j in range(0, image.shape[1]):
             av_br_value = average_brightness_value_calc(image_bordered, i, j, off)
             # st_dev_value = standard_deviation_calc(image_bordered, i, j, off)
             sv2 = standard_deviation_n(image_bordered, i, j, av_br_value, n, off)
-            new_image[i, j] = pixel_improvement(image[i, j], global_brightness_value, av_br_value, sv2)
-    return calculate_fintess(new_image)
+            improved_image[i, j] = pixel_improvement(image[i, j], global_brightness_value, av_br_value, sv2, params)
+    return improved_image
+
+
+
+# -----------------------------------------------------------
+# Расчет преобразования и значения фитнес-функции
+# -----------------------------------------------------------
+def chromosome_improve(params, image, image_bordered, global_brightness_value):
+    n = int(params[4])
+    off = n // 2
+
+    improved_image = transformaton_calculation(image, image_bordered, n, off, global_brightness_value, params)
+
+    fitnes_value = calculate_fintess(improved_image)
+
+    return fitnes_value
+

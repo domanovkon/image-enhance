@@ -29,17 +29,28 @@ def generate_population(population_size):
 
 
 # -----------------------------------------------------------
+# Соритровка популяции по значениям фитнес-функции
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=True)
+def population_sort(images_population):
+    return images_population[images_population[:, 5].argsort()]
+
+
+# -----------------------------------------------------------
 # Генетический алгоритм
 # -----------------------------------------------------------
 def gen_alg(image, image_bordered):
-    epochs = 1
+    epochs = 30
     populationSize = 100
 
     global_brightness_value = global_brightness_value_calc(image)
     images_population = generate_population(populationSize)
 
-    for i in range(populationSize):
-        images_population[i, 5] = transformaton_calculation(image, image_bordered, int(images_population[i][4]),
-                                                            int(images_population[i][4] // 2), global_brightness_value)
-    a = 5
+    for i in range(epochs):
+        for i in range(populationSize):
+            images_population[i, 5] = chromosome_improve(images_population[i], image, image_bordered,
+                                                         global_brightness_value)
 
+    sorted_population = population_sort(images_population)
+
+    a = 5

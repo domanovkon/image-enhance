@@ -30,7 +30,7 @@ def sum_intensity(image):
                 i - 1, j] - image[i - 1, j - 1]
 
             G = round(math.sqrt((hi ** 2) + (vi ** 2)))
-            if (G > 160):
+            if (G > 130):
                 pix_count = pix_count + 1
             E = E + G
             sobel_img[i, j] = G
@@ -63,11 +63,11 @@ def calculate_fintess(image):
     E, pix_count = sum_intensity(image)
     LQ = level_of_adaptation(image)
     fitness_value = fitness_function(image, E, pix_count, entropy, LQ)
-    print("LQ", LQ)
-    print("sum int", E)
-    print("pix count" ,pix_count)
-    print("enropy", entropy)
-    print("Fit value", fitness_value)
+    # print("LQ", LQ)
+    # print("sum int", E)
+    # print("pix count" ,pix_count)
+    # print("enropy", entropy)
+    # print("Fit value", fitness_value)
     return fitness_value
 
 
@@ -76,6 +76,4 @@ def calculate_fintess(image):
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=False)
 def fitness_function(image, E, pix_count, entropy, LQ):
-    image_size = image.shape[0] * image.shape[1]
-    return math.log(math.log(E) + math.e) * (pix_count / image_size) *  (entropy) * LQ
-
+    return math.log(math.log(E) + math.e) * (pix_count / (image.shape[0] * image.shape[1])) * (math.e ** entropy) * LQ
