@@ -17,12 +17,8 @@ from numba import njit
 def sum_intensity(image):
     E = 0
     pix_count = 0
-    sobel_img = image.copy()
-    for i in numba.prange(0, image.shape[0]):
-        for j in range(0, image.shape[1]):
-            if i == 0 or j == 0 or i == image.shape[0] - 1 or j == image.shape[1] - 1:
-                sobel_img[i, j] = 0
-                continue
+    for i in numba.prange(1, image.shape[0] - 1):
+        for j in range(1, image.shape[1] - 1):
             hi = image[i - 1, j + 1] + 2 * image[i, j + 1] + image[i + 1, j + 1] - image[i - 1, j - 1] - 2 * image[
                 i, j - 1] - image[i + 1, j - 1]
 
@@ -33,7 +29,6 @@ def sum_intensity(image):
             if (G > 130):
                 pix_count = pix_count + 1
             E = E + G
-            sobel_img[i, j] = G
     return E, pix_count
 
 
@@ -49,10 +44,9 @@ def measure_of_entropy(image):
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=True)
 def level_of_adaptation(image):
-    max_intensity = image.max() / 2
+    middle_of_range = image.max() / 2
     gl_br_val = np.mean(image)
-    LQ = 1 - (math.fabs(gl_br_val - max_intensity) / max_intensity)
-    return LQ
+    return  1 - (math.fabs(gl_br_val - middle_of_range) / middle_of_range)
 
 
 # -----------------------------------------------------------

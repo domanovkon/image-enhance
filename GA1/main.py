@@ -6,6 +6,17 @@ from improvement_criteria import *
 from genetic_algorithm import *
 
 
+# -----------------------------------------------------------
+#  Зеркальное отражение границ изначального изображения
+#  относительно края.
+#  Сделано для решения проблемы краевых пикселей
+# -----------------------------------------------------------
+def make_mirror_reflection(image, off):
+    image_bordered = cv2.copyMakeBorder(src=image, top=off, bottom=off, left=off, right=off,
+                                        borderType=cv2.BORDER_REFLECT)
+    return image_bordered
+
+
 def load_image(path):
     image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     cv2.imshow("Initial image", image)
@@ -15,16 +26,11 @@ def load_image(path):
     n = 7
     off = n // 2
 
-    # Изображение с зеркальным отражением границ относительно каждого края
-    # Сделано для решения проблемы краевых пикселей
-    image_bordered = cv2.copyMakeBorder(src=image, top=off, bottom=off, left=off, right=off,
-                                        borderType=cv2.BORDER_REFLECT)
+    image_bordered = make_mirror_reflection(image, off)
 
     start_time = time.time()
 
     gen_alg(image, image_bordered)
-
-
 
     # params = []
     # params.append(5)
@@ -34,8 +40,6 @@ def load_image(path):
     # calculate_fintess(new_image)
     # print("old")
     # calculate_fintess(image)
-
-
 
     end_time = time.time() - start_time
     print("Время выполнения --- %s секунд ---" % end_time)

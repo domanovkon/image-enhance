@@ -4,8 +4,6 @@ import math
 import random
 
 from transformation_kernel import *
-from main import *
-from transformation_kernel import *
 
 
 # -----------------------------------------------------------
@@ -40,8 +38,9 @@ def population_sort(images_population):
 # Генетический алгоритм
 # -----------------------------------------------------------
 def gen_alg(image, image_bordered):
-    epochs = 30
+    epochs = 1
     populationSize = 100
+    k = int(np.round(populationSize * 0.1))
 
     global_brightness_value = global_brightness_value_calc(image)
     images_population = generate_population(populationSize)
@@ -52,5 +51,7 @@ def gen_alg(image, image_bordered):
                                                          global_brightness_value)
 
     sorted_population = population_sort(images_population)
+
+    k_best = sorted_population[-k:]
 
     a = 5
