@@ -18,7 +18,7 @@ mutation_rate = 0.1
 
 generations_count = 80
 
-research_mode = True
+research_mode = False
 
 
 # -----------------------------------------------------------
@@ -143,7 +143,7 @@ def enhancement(path):
 
 
 if __name__ == '__main__':
-    file_name = '../imgs/Albert-Einstein.jpg'
+    file_name = '../imgs/camera_man_3.png'
     if research_mode == True:
         research_enhancement(file_name)
     else:

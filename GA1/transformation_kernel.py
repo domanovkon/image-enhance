@@ -30,20 +30,10 @@ def average_brightness_value_calc(image, i, j, off):
 
 # -----------------------------------------------------------
 # Расчет среднеквадратического отклонения в окрестности
+# с добавлением области.
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=True)
-def standard_deviation_calc(image, i, j, off):
-    i = i + off
-    j = j + off
-    return np.std(image[i - off: i + off + 1, j - off: j + off + 1])
-
-
-# -----------------------------------------------------------
-# Расчет среднеквадратического отклонения в окрестности
-# с добавлением черной области.
-# -----------------------------------------------------------
-@njit(fastmath=True, cache=True)
-def standard_deviation_n(image, i, j, av_br_val, n, off):
+def standard_deviation_calc(image, i, j, av_br_val, n, off):
     i = i + off
     j = j + off
     val = 0
@@ -92,9 +82,9 @@ def transformaton_calculation(image, image_bordered, n, off, global_brightness_v
     for i in numba.prange(0, image.shape[0]):
         for j in range(0, image.shape[1]):
             av_br_value = average_brightness_value_calc(image_bordered, i, j, off)
-            # st_dev_value = standard_deviation_calc(image_bordered, i, j, off)
-            st_dev_value = standard_deviation_n(image_bordered, i, j, av_br_value, n, off)
-            improved_image[i, j] = pixel_improvement(image[i, j], global_brightness_value, av_br_value, st_dev_value, params)
+            st_dev_value = standard_deviation_calc(image_bordered, i, j, av_br_value, n, off)
+            improved_image[i, j] = pixel_improvement(image[i, j], global_brightness_value, av_br_value, st_dev_value,
+                                                     params)
     return improved_image
 
 

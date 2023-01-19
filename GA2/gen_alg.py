@@ -37,12 +37,10 @@ def probability_calculation(population, fitness):
 
 
 # -----------------------------------------------------------
-# Формируем выборку родителей исходя из их пригодности
+# Формируем выборку родителей случайным образом
 # -----------------------------------------------------------
-def selection(population, fitness, child_count):
-    population_fitness, chromosome_probabilities = probability_calculation(population, fitness)
-
-    parents = rng.choice(population, p=chromosome_probabilities, size=child_count, replace=False)
+def selection(population, child_count):
+    parents = rng.choice(population, p=None, size=child_count, replace=False)
     return parents
 
 
@@ -65,17 +63,6 @@ def get_parent_indices(k, parents_count):
 
 
 # -----------------------------------------------------------
-# Сортировка новых хромосом и вставка их вместо родителей
-# -----------------------------------------------------------
-def replace_parents_with_child(population, childs, parents):
-    childs[0].sort()
-    childs[1].sort()
-    population[np.where((population == parents[0]).all(-1))[0]] = childs[0]
-    population[np.where((population == parents[1]).all(-1))[0]] = childs[1]
-    return population
-
-
-# -----------------------------------------------------------
 # Двухточечный кроссовер
 # -----------------------------------------------------------
 def crossover(parents, gray_levels_len, child_count, population):
@@ -91,9 +78,9 @@ def crossover(parents, gray_levels_len, child_count, population):
         second_child = np.concatenate((parents[second_parent_index][:cross_points[0]],
                                        parents[first_parent_index][cross_points[0]:cross_points[1]],
                                        parents[second_parent_index][cross_points[1]:]))
-
-        population = replace_parents_with_child(population, [first_child, second_child], parents)
-
+        first_child.sort()
+        second_child.sort()
+        population = np.vstack([population, first_child, second_child])
     return population
 
 
@@ -164,11 +151,11 @@ def genetic_algorithm(image, population_size, crossover_rate, mutation_rate,
     fitness_values_array = []
 
     for generation in (range(generations_count)):
-        fitness = fitness_for_all_population(population, gray_levels, image_array)
+        fitness = fitness_for_all_population(new_population, gray_levels, image_array)
 
         fitness_values_array.append(max(fitness))
 
-        parents = selection(population, fitness, child_count)
+        parents = selection(new_population, child_count)
 
         new_population = crossover(parents, gray_levels_len, child_count, new_population)
 
@@ -179,6 +166,6 @@ def genetic_algorithm(image, population_size, crossover_rate, mutation_rate,
 
     print("---------------")
 
-    fitness = fitness_for_all_population(population, gray_levels, image_array)
+    fitness = fitness_for_all_population(new_population, gray_levels, image_array)
 
     return get_best_image(new_population, fitness, gray_levels, image_array)
