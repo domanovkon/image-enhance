@@ -4,6 +4,7 @@ import random
 
 from random import randint
 from numpy.random import default_rng
+from numpy import unique
 
 from ench import *
 from imp_criteria import *
@@ -26,22 +27,32 @@ def generate_initial_population(all_gray_levels_len, population_size):
 
 
 # -----------------------------------------------------------
-# Вычисляем общую пригодность популяции и каждой отдельной
-# хромосомы
-# -----------------------------------------------------------
-@njit(fastmath=True, cache=True)
-def probability_calculation(population, fitness):
-    population_fitness = sum(fitness)
-    chromosome_probabilities = [fitness[i] / population_fitness for i, chromosome in enumerate(population)]
-    return population_fitness, chromosome_probabilities
-
-
-# -----------------------------------------------------------
 # Формируем выборку родителей случайным образом
 # -----------------------------------------------------------
-def selection(population, child_count):
+def parents_selection(population, child_count):
     parents = rng.choice(population, p=None, size=child_count, replace=False)
     return parents
+
+
+# -----------------------------------------------------------
+# Сортируем популяцию в зависимости от пригодности и
+# population_size лучших значений
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=True)
+def population_sort(population, population_size):
+    sorted_population = population[population[:, population.shape[1] - 1].argsort()]
+    new_population = sorted_population[-population_size:]
+    return new_population
+
+
+# -----------------------------------------------------------
+# Формируем выборку лучших хромосом исходя из их пригодности
+# -----------------------------------------------------------
+def selection(population, fitness, population_size):
+    population_with_fitness = np.concatenate([population, fitness[:, None]], axis=1)
+    sorted_population = population_sort(population_with_fitness, population_size)
+    new_population = np.delete(sorted_population, sorted_population.shape[1] - 1, 1)
+    return new_population
 
 
 # -----------------------------------------------------------
@@ -132,6 +143,14 @@ def get_best_image(new_population, fitness, gray_levels, image_array):
 
 
 # -----------------------------------------------------------
+# Проверка критерия останова
+# Возвращает True, если значение фитнес-функции не
+# обновлялось в течение последних k_last поколений
+# -----------------------------------------------------------
+def is_stop_criteria(fintess_values, k_last):
+    return len(np.unique(fintess_values[-k_last:])) <= 1
+
+# -----------------------------------------------------------
 # Генетический алгоритм
 # -----------------------------------------------------------
 def genetic_algorithm(image, population_size, crossover_rate, mutation_rate,
@@ -155,14 +174,19 @@ def genetic_algorithm(image, population_size, crossover_rate, mutation_rate,
 
         fitness_values_array.append(max(fitness))
 
-        parents = selection(new_population, child_count)
+        new_population = selection(new_population, fitness, num_individuals)
+
+        if generation > 40 and is_stop_criteria(fitness_values_array, 5):
+            break
+
+        parents = parents_selection(new_population, child_count)
 
         new_population = crossover(parents, gray_levels_len, child_count, new_population)
 
         new_population = mutation(mutation_rate, new_population)
 
     if is_graph_plot:
-        plot_generations_graph(generations_count, fitness_values_array)
+        plot_generations_graph(fitness_values_array)
 
     print("---------------")
 

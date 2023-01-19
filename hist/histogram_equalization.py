@@ -1,7 +1,8 @@
 import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
-
+import GA1
+from GA1 import improvement_criteria
 
 def histogram_equalization(path):
     img = cv.imread(path, 0)
@@ -27,11 +28,11 @@ def histogram_equalization(path):
     hist2, bins2 = np.histogram(img2, 256)
     cdf2 = hist2.cumsum()
     plt.plot(hist2, 'g')
-
+    improvement_criteria.calculate_fintess(img2)
     cv.imshow("after", img2)
     plt.show()
     cv.waitKey(0)
 
 
 if __name__ == '__main__':
-    histogram_equalization("../imgs/camera_man_3.png")
+    histogram_equalization("../imgs/low_contrast.jfif")
