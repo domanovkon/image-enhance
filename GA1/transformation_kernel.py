@@ -60,10 +60,10 @@ def pixel_improvement(pixel_intensity, M, m, sigma, params):
     b = params[1]
     c = params[2]
     k = params[3]
-    # a = 0.09
+    # a = 1.2
     # b = 0.4
-    # c = 0.14
-    # k = 1.19
+    # c = 0.8
+    # k = 0.61
     new_pixel_value = int((k * (M / (sigma + b + epsilon))) * (pixel_intensity - c * m) + (m ** a))
     if new_pixel_value < 0:
         new_pixel_value = 0

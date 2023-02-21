@@ -35,23 +35,91 @@ def population_sort(images_population):
 
 
 # -----------------------------------------------------------
+# Функция отбора особей на основе бинарного турнира
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=True)
+def binary_tournament(population, sample_size):
+    selected_parents = []
+    population_size = len(population)
+    for i in range(sample_size):
+        i = random.randint(0, population_size - 1)
+        j = random.randint(0, population_size - 1)
+        while i == j:
+            j = random.randint(0, population_size - 1)
+        if population[i, 5] >= population[j, 5]:
+            selected_parents.append(population[i])
+        else:
+            selected_parents.append(population[j])
+    return selected_parents
+
+
+# -----------------------------------------------------------
+# Функция арифметического кроссовера
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=True)
+def crossover(parents):
+    childs = []
+    parents_size = len(parents) // 2
+    for i in range(parents_size):
+        parent1_index = random.randint(0, parents_size - 1)
+        parent2_index = random.randint(0, parents_size - 1)
+        while parent1_index == parent2_index:
+            parent2_index = random.randint(0, parents_size - 1)
+        child1 = np.zeros(6)
+        child2 = np.zeros(6)
+        random_value = random.uniform(0, 1)
+        for j in range(4):
+            child1[j] = np.round(
+                random_value * parents[parent1_index, j] + (1 - random_value) * parents[parent2_index, j], 2)
+            child2[j] = np.round(
+                random_value * parents[parent2_index, j] + (1 - random_value) * parents[parent1_index, j], 2)
+        if random_value >= 0.5:
+            child1[4] = parents[parent1_index, 4]
+            child2[4] = parents[parent2_index, 4]
+        else:
+            child1[4] = parents[parent2_index, 4]
+            child2[4] = parents[parent1_index, 4]
+        child1[1] = np.round(child1[1], 1)
+        child2[1] = np.round(child2[1], 1)
+        childs.append(child1)
+        childs.append(child2)
+    return childs
+
+
+# -----------------------------------------------------------
 # Генетический алгоритм
 # -----------------------------------------------------------
 def gen_alg(image, image_bordered):
-    epochs = 1
+    epochs = 20
     populationSize = 100
     k = int(np.round(populationSize * 0.1))
 
     global_brightness_value = global_brightness_value_calc(image)
     images_population = generate_population(populationSize)
 
+    for i in range(populationSize):
+        images_population[i, 5] = chromosome_improve(images_population[i], image, image_bordered,
+                                                     global_brightness_value)
+
     for i in range(epochs):
-        for i in range(populationSize):
-            images_population[i, 5] = chromosome_improve(images_population[i], image, image_bordered,
-                                                         global_brightness_value)
+        sorted_population = population_sort(images_population)
+        k_best = sorted_population[-k:]
+        best_score = k_best[-1, 5]
+        print(best_score)
 
-    sorted_population = population_sort(images_population)
+        selected_parents = binary_tournament(sorted_population[:populationSize - k], int(populationSize / 2 - k))
 
-    k_best = sorted_population[-k:]
+        parents = np.concatenate((k_best, selected_parents), axis=0)
+        children = np.stack(crossover(parents), axis=0)
 
-    a = 5
+        for i in range(len(children)):
+            children[i, 5] = chromosome_improve(children[i], image, image_bordered,
+                                                global_brightness_value)
+        images_population = np.concatenate((parents, children), axis=0)
+
+    final_population = population_sort(images_population)
+    best_chromo = final_population[-1]
+
+    n = best_chromo[4]
+    off = n // 2
+    return transformaton_calculation(image, image_bordered, n, off, global_brightness_value, best_chromo)

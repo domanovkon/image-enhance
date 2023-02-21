@@ -30,7 +30,7 @@ def load_image(path):
 
     start_time = time.time()
 
-    gen_alg(image, image_bordered)
+    new_image = gen_alg(image, image_bordered)
 
     # params = []
     # params.append(5)
@@ -44,9 +44,9 @@ def load_image(path):
     end_time = time.time() - start_time
     print("Время выполнения --- %s секунд ---" % end_time)
 
-    # cv2.imshow("Improved image", new_image)
-    # cv2.waitKey(0)
+    cv2.imshow("Improved image", new_image)
+    cv2.waitKey(0)
 
 
 if __name__ == '__main__':
-    load_image('../imgs/camera_man_3.png')
+    load_image('../imgs/CM1.jpg')
