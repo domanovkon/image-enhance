@@ -4,6 +4,7 @@ import math
 import random
 
 from transformation_kernel import *
+from main import *
 
 
 # -----------------------------------------------------------
@@ -120,6 +121,10 @@ def gen_alg(image, image_bordered):
     final_population = population_sort(images_population)
     best_chromo = final_population[-1]
 
-    n = best_chromo[4]
+    n = int(best_chromo[4])
     off = n // 2
-    return transformaton_calculation(image, image_bordered, n, off, global_brightness_value, best_chromo)
+    new_image_bordered = make_mirror_reflection(image, off)
+
+    # n = best_chromo[4]
+    # off = n // 2
+    return transformaton_calculation(image, new_image_bordered, n, off, global_brightness_value, best_chromo)
