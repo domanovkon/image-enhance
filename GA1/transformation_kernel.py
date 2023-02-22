@@ -11,6 +11,17 @@ epsilon = sys.float_info.epsilon
 
 
 # -----------------------------------------------------------
+#  Зеркальное отражение границ изначального изображения
+#  относительно края.
+#  Сделано для решения проблемы краевых пикселей
+# -----------------------------------------------------------
+def make_mirror_reflection(image, off):
+    image_bordered = cv2.copyMakeBorder(src=image, top=off, bottom=off, left=off, right=off,
+                                        borderType=cv2.BORDER_REFLECT)
+    return image_bordered
+
+
+# -----------------------------------------------------------
 # Расчет сраднего значения яркости изображения
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=True)
@@ -91,9 +102,11 @@ def transformaton_calculation(image, image_bordered, n, off, global_brightness_v
 # -----------------------------------------------------------
 # Расчет преобразования и значения фитнес-функции
 # -----------------------------------------------------------
-def chromosome_improve(params, image, image_bordered, global_brightness_value):
+def chromosome_improve(params, image, global_brightness_value):
     n = int(params[4])
     off = n // 2
+
+    image_bordered = make_mirror_reflection(image, off)
 
     improved_image = transformaton_calculation(image, image_bordered, n, off, global_brightness_value, params)
 

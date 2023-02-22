@@ -6,31 +6,20 @@ from improvement_criteria import *
 from genetic_algorithm import *
 
 
-# -----------------------------------------------------------
-#  Зеркальное отражение границ изначального изображения
-#  относительно края.
-#  Сделано для решения проблемы краевых пикселей
-# -----------------------------------------------------------
-def make_mirror_reflection(image, off):
-    image_bordered = cv2.copyMakeBorder(src=image, top=off, bottom=off, left=off, right=off,
-                                        borderType=cv2.BORDER_REFLECT)
-    return image_bordered
-
-
 def load_image(path):
     image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     cv2.imshow("Initial image", image)
     cv2.waitKey(0)
 
     # Размер окрестности
-    n = 7
-    off = n // 2
+    # n = 7
+    # off = n // 2
 
-    image_bordered = make_mirror_reflection(image, off)
+    # image_bordered = make_mirror_reflection(image, off)
 
     start_time = time.time()
 
-    new_image = gen_alg(image, image_bordered)
+    new_image = gen_alg(image)
 
     # params = []
     # params.append(5)

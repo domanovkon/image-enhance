@@ -3,6 +3,7 @@ import numpy as np
 import math
 import random
 
+from utils import *
 from transformation_kernel import *
 from main import *
 
@@ -90,23 +91,26 @@ def crossover(parents):
 # -----------------------------------------------------------
 # Генетический алгоритм
 # -----------------------------------------------------------
-def gen_alg(image, image_bordered):
+def gen_alg(image):
     epochs = 20
     populationSize = 100
     k = int(np.round(populationSize * 0.1))
 
     global_brightness_value = global_brightness_value_calc(image)
+
     images_population = generate_population(populationSize)
 
     for i in range(populationSize):
-        images_population[i, 5] = chromosome_improve(images_population[i], image, image_bordered,
+        images_population[i, 5] = chromosome_improve(images_population[i], image,
                                                      global_brightness_value)
+
+    fitness_values_array = []
 
     for i in range(epochs):
         sorted_population = population_sort(images_population)
         k_best = sorted_population[-k:]
-        best_score = k_best[-1, 5]
-        print(best_score)
+
+        fitness_values_array.append(k_best[-1, 5])
 
         selected_parents = binary_tournament(sorted_population[:populationSize - k], int(populationSize / 2 - k))
 
@@ -114,12 +118,14 @@ def gen_alg(image, image_bordered):
         children = np.stack(crossover(parents), axis=0)
 
         for i in range(len(children)):
-            children[i, 5] = chromosome_improve(children[i], image, image_bordered,
+            children[i, 5] = chromosome_improve(children[i], image,
                                                 global_brightness_value)
         images_population = np.concatenate((parents, children), axis=0)
 
     final_population = population_sort(images_population)
     best_chromo = final_population[-1]
+
+    plot_generations_graph(fitness_values_array)
 
     n = int(best_chromo[4])
     off = n // 2
