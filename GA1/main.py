@@ -17,9 +17,11 @@ def load_image(path):
 
     # image_bordered = make_mirror_reflection(image, off)
 
+    mutation_rate = 0.07
+
     start_time = time.time()
 
-    new_image = gen_alg(image)
+    new_image = gen_alg(image, mutation_rate)
 
     # params = []
     # params.append(5)
@@ -38,4 +40,4 @@ def load_image(path):
 
 
 if __name__ == '__main__':
-    load_image('../imgs/CM1.jpg')
+    load_image('../imgs/kaka.jfif')

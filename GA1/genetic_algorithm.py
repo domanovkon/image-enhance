@@ -89,9 +89,25 @@ def crossover(parents):
 
 
 # -----------------------------------------------------------
+# Функция мутации
+# -----------------------------------------------------------
+@njit(fastmath=True, cache=True)
+def mutation(children, mutation_rate):
+    for i in range(len(children)):
+        if np.random.random() <= mutation_rate:
+            selected_gen = np.random.randint(0, 3)
+            change_value = np.random.randint(0, 1)
+            if (change_value == 0):
+                children[i, selected_gen] = children[i, selected_gen] - 0.1 * children[i, selected_gen]
+            else:
+                children[i, selected_gen] = children[i, selected_gen] + 0.1 * children[i, selected_gen]
+    return children
+
+
+# -----------------------------------------------------------
 # Генетический алгоритм
 # -----------------------------------------------------------
-def gen_alg(image):
+def gen_alg(image, mutation_rate):
     epochs = 20
     populationSize = 100
     k = int(np.round(populationSize * 0.1))
@@ -107,6 +123,7 @@ def gen_alg(image):
     fitness_values_array = []
 
     for i in range(epochs):
+        images_population[np.isnan(images_population)] = 0
         sorted_population = population_sort(images_population)
         k_best = sorted_population[-k:]
 
@@ -115,7 +132,10 @@ def gen_alg(image):
         selected_parents = binary_tournament(sorted_population[:populationSize - k], int(populationSize / 2 - k))
 
         parents = np.concatenate((k_best, selected_parents), axis=0)
+
         children = np.stack(crossover(parents), axis=0)
+
+        children = mutation(children, mutation_rate)
 
         for i in range(len(children)):
             children[i, 5] = chromosome_improve(children[i], image,
@@ -131,6 +151,4 @@ def gen_alg(image):
     off = n // 2
     new_image_bordered = make_mirror_reflection(image, off)
 
-    # n = best_chromo[4]
-    # off = n // 2
     return transformaton_calculation(image, new_image_bordered, n, off, global_brightness_value, best_chromo)
