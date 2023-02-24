@@ -54,7 +54,7 @@ def standard_deviation_calc(image, i, j, av_br_val, n, off):
 
     black_area = 0
     white_area = 255
-    val = val + (n ** 2 * ((black_area - av_br_val) ** 2))
+    val = val + (n ** 2 * ((white_area - av_br_val) ** 2))
     return math.sqrt(val / (n ** 2) * 2)
 
 

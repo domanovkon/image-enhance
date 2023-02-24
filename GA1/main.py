@@ -4,6 +4,7 @@ import time
 from transformation_kernel import *
 from improvement_criteria import *
 from genetic_algorithm import *
+# from gen_alg import *
 
 
 def load_image(path):
