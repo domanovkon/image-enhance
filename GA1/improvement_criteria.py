@@ -44,7 +44,10 @@ def measure_of_entropy(image):
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=True)
 def level_of_adaptation(image):
-    middle_of_range = image.max() / 2
+    max_val = image.max()
+    if max_val == 0:
+        max_val = 1
+    middle_of_range = max_val / 2
     gl_br_val = np.mean(image)
     return  1 - (math.fabs(gl_br_val - middle_of_range) / middle_of_range)
 

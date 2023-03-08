@@ -40,18 +40,15 @@ def population_sort(images_population):
 # Функция отбора особей на основе бинарного турнира
 # -----------------------------------------------------------
 @njit(fastmath=True, cache=True)
-def binary_tournament(population, sample_size):
+def binary_tournament(population):
     selected_parents = []
-    population_size = len(population)
-    for i in range(sample_size):
-        i = random.randint(0, population_size - 1)
-        j = random.randint(0, population_size - 1)
-        while i == j:
-            j = random.randint(0, population_size - 1)
-        if population[i, 5] >= population[j, 5]:
-            selected_parents.append(population[i])
+    chromosomes = population.copy()
+    np.random.shuffle(chromosomes)
+    for i in range(0, len(chromosomes), 2):
+        if (chromosomes[i, 5] >= chromosomes[i + 1, 5]):
+            selected_parents.append(chromosomes[i])
         else:
-            selected_parents.append(population[j])
+            selected_parents.append(chromosomes[i + 1])
     return selected_parents
 
 
@@ -105,12 +102,21 @@ def mutation(children, mutation_rate):
 
 
 # -----------------------------------------------------------
+# Проверка критерия останова
+# Возвращает True, если значение фитнес-функции не
+# обновлялось в течение последних k_last поколений
+# -----------------------------------------------------------
+def is_stop_criteria(fintess_values, k_last):
+    return len(np.unique(fintess_values[-k_last:])) <= 1
+
+
+# -----------------------------------------------------------
 # Генетический алгоритм
 # -----------------------------------------------------------
 def gen_alg(image, mutation_rate):
     epochs = 20
     populationSize = 100
-    k = int(np.round(populationSize * 0.1))
+    k = int(np.round(populationSize * 0.05))
 
     global_brightness_value = global_brightness_value_calc(image)
 
@@ -129,7 +135,10 @@ def gen_alg(image, mutation_rate):
 
         fitness_values_array.append(k_best[-1, 5])
 
-        selected_parents = binary_tournament(sorted_population[:populationSize - k], int(populationSize / 2 - k))
+        if i > 10 and is_stop_criteria(fitness_values_array, 10):
+            break
+
+        selected_parents = binary_tournament(sorted_population[:populationSize - k])
 
         parents = np.concatenate((k_best, selected_parents), axis=0)
 
@@ -141,6 +150,7 @@ def gen_alg(image, mutation_rate):
             children[i, 5] = chromosome_improve(children[i], image,
                                                 global_brightness_value)
         images_population = np.concatenate((parents, children), axis=0)
+        populationSize = len(images_population)
 
     final_population = population_sort(images_population)
     best_chromo = final_population[-1]

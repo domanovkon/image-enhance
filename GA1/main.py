@@ -41,4 +41,4 @@ def load_image(path):
 
 
 if __name__ == '__main__':
-    load_image('../imgs/kaka.jfif')
+    load_image('../imgs/CM2.jpg')
