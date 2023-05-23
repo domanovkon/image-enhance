@@ -95,9 +95,9 @@ def mutation(children, mutation_rate):
             selected_gen = np.random.randint(0, 3)
             change_value = np.random.randint(0, 1)
             if (change_value == 0):
-                children[i, selected_gen] = children[i, selected_gen] - 0.1 * children[i, selected_gen]
+                children[i, selected_gen] = children[i, selected_gen] - 0.5 * children[i, selected_gen]
             else:
-                children[i, selected_gen] = children[i, selected_gen] + 0.1 * children[i, selected_gen]
+                children[i, selected_gen] = children[i, selected_gen] + 0.5 * children[i, selected_gen]
     return children
 
 
@@ -154,8 +154,6 @@ def gen_alg(image, mutation_rate):
 
     final_population = population_sort(images_population)
     best_chromo = final_population[-1]
-
-    plot_generations_graph(fitness_values_array)
 
     n = int(best_chromo[4])
     off = n // 2

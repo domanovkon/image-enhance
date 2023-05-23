@@ -131,21 +131,25 @@ def enhancement(path):
 
     population = generate_initial_population(all_gray_levels_len, population_size)
 
-    final_generations_count = 100
+    final_generations_count = 80
 
     improved_image, max_fitness = genetic_algorithm(image, population_size, crossover_rate, mutation_rate,
-                                                    final_generations_count, copy.deepcopy(population), True)
+                                                    final_generations_count, copy.deepcopy(population), False)
 
     end_time = time.time() - start_time
+    print("Изображение улучшено")
     print("Время выполнения --- %s секунд ---" % end_time)
+
+    print("---------------")
 
     save_improved_image(improved_image, image)
 
+    calculate_metrics(image, improved_image)
+
 
 if __name__ == '__main__':
-    file_name = '../imgs/camera_man_3.png'
+    path = "../input_images/5.jpeg"
     if research_mode == True:
-        research_enhancement(file_name)
+        research_enhancement(path)
     else:
-        enhancement(file_name)
-    print("Изображение улучшено")
+        enhancement(path)

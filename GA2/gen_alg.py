@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 import random
+import time
 
 from random import randint
 from numpy.random import default_rng
@@ -110,14 +111,14 @@ def chromosome_replacement(population, chromosome, chromosome_index, mutated_gen
 
 # -----------------------------------------------------------
 # Мутация
-# 5 % генов хромосомы подвергаются мутации
+# 70 % генов хромосомы подвергаются мутации
 # -----------------------------------------------------------
 def mutation(mutation_rate, population):
     chromosome_len = len(population[0])
 
     for chromosome_index, chromosome in enumerate(population):
         if np.random.random() < mutation_rate:
-            mutated_genes_count = int(0.05 * chromosome_len)
+            mutated_genes_count = int(0.7 * chromosome_len)
             # Случайным образом выбираем гены в хромосоме
             # Рассматриваем диапазон [1; n-1]
             mutated_genes_indices = np.sort(
@@ -149,6 +150,7 @@ def get_best_image(new_population, fitness, gray_levels, image_array):
 # -----------------------------------------------------------
 def is_stop_criteria(fintess_values, k_last):
     return len(np.unique(fintess_values[-k_last:])) <= 1
+
 
 # -----------------------------------------------------------
 # Генетический алгоритм
@@ -184,11 +186,6 @@ def genetic_algorithm(image, population_size, crossover_rate, mutation_rate,
         new_population = crossover(parents, gray_levels_len, child_count, new_population)
 
         new_population = mutation(mutation_rate, new_population)
-
-    if is_graph_plot:
-        plot_generations_graph(fitness_values_array)
-
-    print("---------------")
 
     fitness = fitness_for_all_population(new_population, gray_levels, image_array)
 

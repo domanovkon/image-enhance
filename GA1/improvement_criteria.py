@@ -4,7 +4,6 @@ import numba
 import numpy as np
 import skimage.measure
 
-from skimage.metrics import structural_similarity
 from numba import njit
 
 

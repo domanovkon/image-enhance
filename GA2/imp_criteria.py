@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import skimage.measure
 
 from ench import *
 
@@ -86,3 +87,29 @@ def image_comparison(image, hist_equalized_img, improved_image):
     print("Количество ребер после эквализации гистограммы: ", hist_edge_count)
     print("Количество ребер улучшенного изображения: ", improved_edge_count)
     return initial_edge_count, hist_edge_count, improved_edge_count
+
+
+def measure_of_entropy(image):
+    return skimage.measure.shannon_entropy(image)
+
+
+def calculate_metrics(initial, improved):
+    E_init, pix_count_init = sum_intensity(initial)
+    LQ_init = level_of_adaptation(initial)
+    ent_init = measure_of_entropy(initial)
+    print("Исходное изображение")
+    print("Уровень адаптации по яркости", LQ_init)
+    print("Количество краевых пикселей", pix_count_init)
+    print("Суммарная интенсивность краевых писелей", E_init)
+    print("Энтропия", ent_init)
+
+    print("---------------")
+
+    E_imp, pix_count_imp = sum_intensity(improved)
+    LQ_imp = level_of_adaptation(improved)
+    ent_imp = measure_of_entropy(improved)
+    print("Улучшенное изображение")
+    print("Уровень адаптации по яркости", LQ_imp)
+    print("Количество краевых пикселей", pix_count_imp)
+    print("Суммарная интенсивность краевых писелей", E_imp)
+    print("Энтропия", ent_imp)

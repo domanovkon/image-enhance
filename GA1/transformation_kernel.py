@@ -54,7 +54,7 @@ def standard_deviation_calc(image, i, j, av_br_val, n, off):
 
     black_area = 0
     white_area = 255
-    val = val + (n ** 2 * ((black_area - av_br_val) ** 2))
+    val = val + (n ** 2 * ((white_area - av_br_val) ** 2))
     return math.sqrt(val / (n ** 2) * 2)
 
 
@@ -71,10 +71,10 @@ def pixel_improvement(pixel_intensity, M, m, sigma, params):
     b = params[1]
     c = params[2]
     k = params[3]
-    # a = 1.2
+    # a = 0.19
     # b = 0.4
-    # c = 0.8
-    # k = 0.61
+    # c = 0.92
+    # k = 1.28
     new_pixel_value = int((k * (M / (sigma + b + epsilon))) * (pixel_intensity - c * m) + (m ** a))
     if new_pixel_value < 0:
         new_pixel_value = 0

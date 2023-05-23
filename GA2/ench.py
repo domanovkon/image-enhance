@@ -130,9 +130,10 @@ def show_graph(rate, fitness, label):
 def plot_generations_graph(fitness_values_array):
     plt.figure(figsize=(10, 10))
     plt.plot([i for i in range(len(fitness_values_array))], fitness_values_array)
-    plt.title("Зависимость")
-    plt.xlabel("Поколение")
-    plt.ylabel("Фитнес-функция")
+    plt.rc('font', size=30)
+    plt.tick_params(labelsize=18)
+    plt.xlabel("Поколение", fontsize=22)
+    plt.ylabel("Фитнес-функция", fontsize=22)
     plt.savefig('result/generations-fitness.png')
 
 
@@ -140,8 +141,10 @@ def plot_generations_graph(fitness_values_array):
 # Сохраняет итоговое изображение
 # -----------------------------------------------------------
 def save_improved_image(improved_image, initial_image):
+    plt.rc('font', size=12)
+    plt.tick_params(labelsize=18)
     f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
-    f.suptitle('ГА')
+    f.suptitle('Метод подбора интенсивностей (Глобальный подход)')
 
     ax1.imshow(initial_image, cmap='gray', vmin=0, vmax=255)
     ax1.set_title("Исходое изображение")

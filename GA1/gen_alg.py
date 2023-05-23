@@ -150,7 +150,7 @@ def gen_alg(image, mutation_rate):
     final_population = population_sort(images_population)
     best_chromo = final_population[-1]
 
-    plot_generations_graph(fitness_values_array)
+    # plot_generations_graph(fitness_values_array)
 
     n = int(best_chromo[4])
     off = n // 2

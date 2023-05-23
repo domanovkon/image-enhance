@@ -13,10 +13,10 @@ def load_image(path):
     cv2.waitKey(0)
 
     # Размер окрестности
-    # n = 7
-    # off = n // 2
+    n = 7
+    off = n // 2
 
-    # image_bordered = make_mirror_reflection(image, off)
+    image_bordered = make_mirror_reflection(image, off)
 
     mutation_rate = 0.07
 
@@ -25,7 +25,7 @@ def load_image(path):
     new_image = gen_alg(image, mutation_rate)
 
     # params = []
-    # params.append(5)
+    # params.append(7)
     # global_brightness_value = global_brightness_value_calc(image)
     # new_image = transformaton_calculation(image, image_bordered, n, off, global_brightness_value, params)
     # print("new")
@@ -34,11 +34,23 @@ def load_image(path):
     # calculate_fintess(image)
 
     end_time = time.time() - start_time
+    print("Изображение улучшено")
     print("Время выполнения --- %s секунд ---" % end_time)
+
+    print("---------------")
 
     cv2.imshow("Improved image", new_image)
     cv2.waitKey(0)
 
+    save_improved_image(new_image, image)
+
+    calculate_metrics(image, new_image)
+
 
 if __name__ == '__main__':
-    load_image('../imgs/CM2.jpg')
+    # path = "../imgs/camera_man_3.png"
+    path = "../input_images/5.jpeg"
+    # path = "../../../../../../Downloads/Telegram Desktop/IMG_20230510_225637_922-03.jpeg"
+    # path = "../imgs/Albert-Einstein.jpg"
+    load_image(path)
+    # load_image('../imgs/camera_man_3.png')
