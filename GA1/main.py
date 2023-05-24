@@ -4,7 +4,6 @@ import time
 from transformation_kernel import *
 from improvement_criteria import *
 from genetic_algorithm import *
-# from gen_alg import *
 
 
 def load_image(path):
@@ -36,9 +35,7 @@ def load_image(path):
     end_time = time.time() - start_time
     print("Изображение улучшено")
     print("Время выполнения --- %s секунд ---" % end_time)
-
     print("---------------")
-
     cv2.imshow("Improved image", new_image)
     cv2.waitKey(0)
 
@@ -48,9 +45,5 @@ def load_image(path):
 
 
 if __name__ == '__main__':
-    # path = "../imgs/camera_man_3.png"
     path = "../input_images/5.jpeg"
-    # path = "../../../../../../Downloads/Telegram Desktop/IMG_20230510_225637_922-03.jpeg"
-    # path = "../imgs/Albert-Einstein.jpg"
     load_image(path)
-    # load_image('../imgs/camera_man_3.png')

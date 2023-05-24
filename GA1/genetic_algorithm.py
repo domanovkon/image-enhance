@@ -16,7 +16,7 @@ from main import *
 #   k ∈ [0.5 , 1.5]
 # -----------------------------------------------------------
 def generate_population(population_size):
-    n_values = [3, 5, 7]
+    n_values = [3, 5]
 
     generatedMatrix = np.zeros((population_size, 6))
     generatedMatrix[:, 0] = np.round(np.random.uniform(0, 1.5, population_size), 2)

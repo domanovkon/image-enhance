@@ -59,11 +59,6 @@ def calculate_fintess(image):
     E, pix_count = sum_intensity(image)
     LQ = level_of_adaptation(image)
     fitness_value = fitness_function(image, E, pix_count, entropy, LQ)
-    # print("LQ", LQ)
-    # print("sum int", E)
-    # print("pix count" ,pix_count)
-    # print("enropy", entropy)
-    # print("Fit value", fitness_value)
     return fitness_value
 
 

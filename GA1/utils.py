@@ -42,9 +42,7 @@ def calculate_metrics(initial, improved):
     print("Количество краевых пикселей", pix_count_init)
     print("Суммарная интенсивность краевых писелей", E_init)
     print("Мера энтропии", entropy_init)
-
     print("---------------")
-
     E_imp, pix_count_imp = sum_intensity(improved)
     LQ_imp = level_of_adaptation(improved)
     entropy_imp = measure_of_entropy(improved)
