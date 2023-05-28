@@ -3,6 +3,8 @@ import cv2
 import copy
 import numba
 import time
+import pygetwindow as gw
+import os
 
 from numba import njit
 
@@ -148,8 +150,18 @@ def enhancement(path):
 
 
 if __name__ == '__main__':
-    path = "../input_images/5.jpeg"
+    if (len(sys.argv) > 1):
+        path = "../input_images/" + sys.argv[1]
+    else:
+        path = "../input_images/1.jpeg"
+
     if research_mode == True:
         research_enhancement(path)
     else:
         enhancement(path)
+
+    img_path = 'C:/Users/domanov/Documents/учеба/баумана/диплом/image-enhance/GA2/result/improved.png'
+    os.startfile(img_path)
+    improved_image_window_ga2 = gw.getWindowsWithTitle('Фотографии')[0]
+    improved_image_window_ga2.resizeTo(780, 420)
+    improved_image_window_ga2.moveTo(0, 400)

@@ -1,5 +1,9 @@
+import sys
+
 import cv2
 import time
+import os
+import pygetwindow as gw
 
 from transformation_kernel import *
 from improvement_criteria import *
@@ -36,8 +40,6 @@ def load_image(path):
     print("Изображение улучшено")
     print("Время выполнения --- %s секунд ---" % end_time)
     print("---------------")
-    cv2.imshow("Improved image", new_image)
-    cv2.waitKey(0)
 
     save_improved_image(new_image, image)
 
@@ -45,5 +47,14 @@ def load_image(path):
 
 
 if __name__ == '__main__':
-    path = "../input_images/5.jpeg"
+    if (len(sys.argv) > 1):
+        path = "../input_images/" + sys.argv[1]
+    else:
+        path = "../input_images/1.jpeg"
+
     load_image(path)
+    img_path = 'C:/Users/domanov/Documents/учеба/баумана/диплом/image-enhance/GA1/result/improved.png'
+    os.startfile(img_path)
+    improved_image_window = gw.getWindowsWithTitle('Фотографии')[0]
+    improved_image_window.resizeTo(780, 420)
+    improved_image_window.moveTo(0, 10)
